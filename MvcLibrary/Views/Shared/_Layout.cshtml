@@ -31,11 +31,16 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Register">Register</a>
-                            </li>
+                            </li>                           
                         } else {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
                             </li>
+                            @if (ViewBag.IsAdmin is not null && ViewBag.IsAdmin == "True") {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="ManageUsers">Admin</a>
+                                </li>
+                            }
                         }
                     </ul>
                 </div>

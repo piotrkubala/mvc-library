@@ -1,0 +1,48 @@
+@if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "" || ((String ?) ViewData["IsAdmin"]) != "True") {
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+} else {
+    <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
+    <h2 class="text-center">Admin panel</h2>
+
+    <form>
+        <table class="text-center">
+            <tr>
+                <th>Username</th>
+                <th>Is admin?</th>
+                <th>Is approved?</th>
+                <br/>
+            </tr>
+            @if (ViewData["AllUsers"] is not null) {
+                @foreach (MvcLibrary.Controllers.UserData item in (ViewData["AllUsers"] as List<MvcLibrary.Controllers.UserData>)) {
+                    <tr>
+                        <th>@item.Username</th>
+                        <th>
+                            @if (item.IsAdmin) {
+                                <span>
+                                    ADMIN
+                                </span>
+                            } else {
+                                <input type="checkbox" name="admin-@item.Username"/>
+                            }
+                        </th>
+                        <th>
+                            @if (item.IsAdmin) {
+                                <span>
+                                    ADMIN
+                                </span>
+                            } else {
+                                <input type="checkbox" name="approved-@item.Username" @if (item.IsAdmin) {
+                                    @:checked
+                                }/>
+                            }
+                        </th>
+                        <br/>
+                    </tr>
+                }
+            }
+        </table>
+
+        <input type="submit" value="Save changes" />
+    </form>
+}

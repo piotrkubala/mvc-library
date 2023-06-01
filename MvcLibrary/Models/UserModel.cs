@@ -26,4 +26,7 @@ public class UserModel {
 
     [Required]
     public bool IsAdmin { get; set; } = false;
+
+    [Required]
+    public bool IsApproved { get; set; } = false;
 }

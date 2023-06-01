@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MvcLibrary.Data;
+using MvcLibrary.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,5 +43,30 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+using (var scope = app.Services.CreateScope()) {
+    // create new user if database is empty
+    using(UserDBContext ?db = scope.ServiceProvider.GetService<UserDBContext>()) {
+        if (db is null) {
+            throw new Exception("UserDBContext is null");
+        }
+
+        if (db.Users.Count() == 0) {
+            String password = "admin";
+            String salt = MvcLibrary.Controllers.CryptoCalculator.GenerateRandomString(128);
+
+            db.Users.Add(new UserModel {
+                Username = "admin",
+                PasswordHash = MvcLibrary.Controllers.CryptoCalculator.CreateSHA256WithSalt(password, salt),
+                PasswordSalt = salt,
+                IsAdmin = true,
+                IsApproved = true
+            });
+
+            db.SaveChanges();
+        }
+    }
+}
 
 app.Run();

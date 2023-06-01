@@ -9,6 +9,12 @@ using System.Text;
 
 namespace MvcLibrary.Controllers;
 
+public struct UserData {
+    public String Username;
+    public bool IsApproved;
+    public bool IsAdmin;
+};
+
 [Route("[controller]/")]
 public class UserController : Controller
 {
@@ -68,6 +74,14 @@ public class UserController : Controller
 
         // user found
         UserModel userModel = found.First();
+
+        if (userModel.IsApproved == false) {
+            // user not approved
+            ViewData["LoginResult"] = "Your account is not approved yet";
+
+            return View();
+        }
+
         String passwordSalt = userModel.PasswordSalt;
 
         String calculatedHash = CryptoCalculator.CreateSHA256WithSalt(passwordGiven, passwordSalt);
@@ -147,12 +161,12 @@ public class UserController : Controller
 
         // user does not exist
 
-        String passwordSalt = CryptoCalculator.generateRandomString(128);
+        String passwordSalt = CryptoCalculator.GenerateRandomString(128);
         String passwordHash = CryptoCalculator.CreateSHA256WithSalt(password1Given, passwordSalt);
         String apiKey = "";
 
         do {
-            apiKey = CryptoCalculator.generateRandomString(256);
+            apiKey = CryptoCalculator.GenerateRandomString(256);
 
             foundNumber =
                 (
@@ -167,16 +181,45 @@ public class UserController : Controller
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
             APIKey = apiKey,
-            IsAdmin = false
+            IsAdmin = false,
+            IsApproved = false
         };
 
         _db.Users.Add(newUser);
         _db.SaveChanges();
 
-        ViewData["RegisterResult"] = "Successfully registered";
+        ViewData["RegisterResult"] = "Successfully registered, waiting for admin to approve your account";
         ViewData["RegisterSuccess"] = "true";
 
         SetViewDataFromSession();
+
+        return View();
+    }
+
+    [Route("manage/")]
+    public IActionResult ManageUsers() {
+        if (HttpContext.Session.GetString("username") == null) {
+            return RedirectToAction("Index", "Home");
+        }
+
+        if (HttpContext.Session.GetString("isadmin") != "True") {
+            return RedirectToAction("Index", "Home");
+        }
+
+        SetViewDataFromSession();
+
+        List<UserData> allUsers =
+            (
+                from user in _db.Users
+                orderby user.IsAdmin descending, user.IsApproved ascending, user.Username ascending
+                select new UserData {
+                    Username = user.Username,
+                    IsApproved = user.IsApproved,
+                    IsAdmin = user.IsAdmin
+                }
+            ).ToList();
+
+        ViewData["AllUsers"] = allUsers;
 
         return View();
     }
@@ -194,7 +237,7 @@ public class UserController : Controller
     }
 }
 
-class CryptoCalculator {
+public class CryptoCalculator {
     public static String CreateSHA256(String input) {
         using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
         {
@@ -209,7 +252,7 @@ class CryptoCalculator {
         return CreateSHA256(input + salt);
     }
 
-    public static String generateRandomString(int len) {
+    public static String GenerateRandomString(int len) {
         Random random = new Random();
 
         byte[] bytes = new byte[len];
