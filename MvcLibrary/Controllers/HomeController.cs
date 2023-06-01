@@ -6,26 +6,35 @@ namespace MvcLibrary.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private void SetViewDataFromSession() {
+        if (HttpContext.Session.GetString("username") == null) {
+            ViewData["Username"] = "";
+            ViewData["IsAdmin"] = "";
 
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
+            return;
+        }
+
+        ViewData["Username"] = HttpContext.Session.GetString("username");
+        ViewData["IsAdmin"] = HttpContext.Session.GetString("isadmin");
     }
 
-    public IActionResult Index()
-    {
+    public HomeController() {
+    }
+
+    public IActionResult Index() {
+        SetViewDataFromSession();
+
         return View();
     }
 
-    public IActionResult Privacy()
-    {
+    public IActionResult Privacy() {
+        SetViewDataFromSession();
+
         return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
+    public IActionResult Error() {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
