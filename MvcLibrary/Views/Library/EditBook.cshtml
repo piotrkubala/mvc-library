@@ -1,0 +1,32 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+
+@if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "" || ((BookCategoryModel []?) ViewData["BookCategories"]) is null) {
+    <h1 class="text-center">Please log in to continue</h1>
+} else {
+    <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
+    <h2 class="text-center">Edit book</h2>
+
+    <form class="pure-form" method="post">
+        <input type="text" name="title" placeholder="Title" class="form-control" value="@ViewData["title"]" />
+        <input type="text" name="author" placeholder="Author" class="form-control" value="@ViewData["author"]" />
+        <input type="text" name="description" placeholder="Description" class="form-control" value="@ViewData["description"]" />
+        <input type="text" name="publisher" placeholder="Publisher" class="form-control" value="@ViewData["publisher"]" />
+        <input type="text" name="isbn" placeholder="ISBN" class="form-control" value="@ViewData["isbn"]" />
+        <input type="date" name="publication-date" placeholder="Publication Date" class="form-control" value="@ViewData["publication-date"]" />
+        
+        <select name="book-category-id" class="form-control" >
+            @foreach (BookCategoryModel category in (ViewData["BookCategories"] as BookCategoryModel[])) { 
+                @if (category.BookCategoryId == (int ?) ViewData["book-category-id"]) {
+                    <option value="@category.BookCategoryId" selected >@category.Name</option>
+                } else {
+                    <option value="@category.BookCategoryId" >@category.Name</option>
+                }
+            }
+        </select>
+
+        <br/>
+        <br/><input type="submit" value="Edit" class="pure-button pure-button-primary" />
+    </form>
+}
+
+<h2 class="text-center">@ViewData["EditBookMessage"]</h2>

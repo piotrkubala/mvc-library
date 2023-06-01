@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+
 @using MvcLibrary.Controllers
 
 @if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "") {
@@ -6,7 +8,8 @@
     <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
     <h2 class="text-center">Book list</h2>
 
-    <table class="text-center">
+    <table class="text-center pure-table">
+        <thead>
         <tr>
             <th>BookId</th>
             <th>Title</th>
@@ -17,16 +20,24 @@
             <th>Publication date</th>
             <br/>
         </tr>
+        </thead>
         @if (ViewData["BooksList"] is not null) {
             @foreach (BookDisplayElement item in (ViewData["BooksList"] as BookDisplayElement[])) {
-                <th>@item.BookId</th>
-                <th>@item.Title</th>
-                <th>@item.Author</th>
-                <th>@item.BookCategory</th>
-                <th>@item.Publisher</th>
-                <th>@item.Isbn</th>
-                <th>@item.PublicationDate</th>
-                <br/>
+                <tr>
+                    <th>@item.BookId</th>
+                    <th>@item.Title</th>
+                    <th>@item.Author</th>
+                    <th>@item.BookCategory</th>
+                    <th>@item.Publisher</th>
+                    <th>@item.Isbn</th>
+                    <th>@item.PublicationDate</th>
+                    <th>
+                        <a class="nav-link text-dark" href="/Library/editbook/@item.BookId" >
+                            Edit
+                        </a>
+                    </th>
+                    <br/>
+                </tr>
             }
         }
     </table>

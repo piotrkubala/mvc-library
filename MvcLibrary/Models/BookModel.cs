@@ -24,6 +24,9 @@ public class BookModel {
     [StringLength(250)]
     public string Isbn { get; set; } = "";
 
+    [Required]
+    public string Description { get; set; } = "";
+
     [DataType(DataType.Date)]
     public DateTime? PublicationDate { get; set; }
 

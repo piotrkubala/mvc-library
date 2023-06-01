@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+
 @if (ViewData["Username"] is null || ((String?)ViewData["Username"]) == "")
 {
     <h1 class="text-center">Please log in to continue</h1>
@@ -11,7 +13,7 @@ else
         <div class="form-group">
             <input type="text" id="categoryName" name="category-name" placeholder="Enter category name" />
             <input type="text" id="categoryDescription" name="category-description"
-                placeholder="Enter category description" />
+                placeholder="Enter category description" /><br/>
         <br /><input type="submit" class="pure-button pure-button-primary" value="Submit" asp-page-handler="Submit" />
         </div>
     </form>
