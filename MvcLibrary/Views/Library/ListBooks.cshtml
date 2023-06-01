@@ -18,7 +18,7 @@
             <br/>
         </tr>
         @if (ViewData["BooksList"] is not null) {
-            @foreach (BookDisplayElement item in (ViewData["BooksList"] as List<BookDisplayElement>)) {
+            @foreach (BookDisplayElement item in (ViewData["BooksList"] as BookDisplayElement[])) {
                 <th>@item.BookId</th>
                 <th>@item.Title</th>
                 <th>@item.Author</th>

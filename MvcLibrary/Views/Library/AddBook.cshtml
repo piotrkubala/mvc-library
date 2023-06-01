@@ -12,7 +12,7 @@
         <input type="text" name="isbn" placeholder="ISBN" class="form-control" />
         <input type="date" name="publication-date" placeholder="Publication Date" class="form-control" />
         
-        <select name="category" class="form-control">
+        <select name="book-category-id" class="form-control">
             @foreach (BookCategoryModel category in (ViewData["BookCategories"] as BookCategoryModel[])) {
                 <option value="@category.BookCategoryId">@category.Name</option>
             }
@@ -20,5 +20,6 @@
 
         <br/><input type="submit" value="Add" class="pure-button pure-button-primary" />
     </form>
-    @ViewData["AddBookMessage"]
 }
+
+<h2 class="text-center">@ViewData["AddBookMessage"]</h2>

@@ -64,7 +64,7 @@ public class LibraryController : Controller {
                 }
             ).ToArray();
 
-        ViewData["Books"] = books;
+        ViewData["BooksList"] = books;
 
         return View();
     }
@@ -96,6 +96,7 @@ public class LibraryController : Controller {
         List<String> fields = new List<String> {
             "title",
             "author",
+            "description",
             "publisher",
             "isbn",
             "publication-date",
@@ -109,10 +110,6 @@ public class LibraryController : Controller {
                 return View();
             }
         }
-
-        Console.WriteLine("===========================================");
-        Console.WriteLine((String ?) form["publication-date"]);
-
 
         try {
             List<BookCategoryModel> category = (
