@@ -1,0 +1,20 @@
+@if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "") {
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+} else {
+    <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
+    <h2 class="text-center">Book list</h2>
+
+    <table class="text-center">
+        <tr>
+            <th>Username</th>
+            <th>Is admin?</th>
+            <th>Is approved?</th>
+            <br/>
+        </tr>
+        @if (ViewData["BooksList"] is not null) {
+            @foreach (BookModel item in (ViewData["BooksList"] as List<BookModel>)) {
+            }
+        }
+    </table>
+}

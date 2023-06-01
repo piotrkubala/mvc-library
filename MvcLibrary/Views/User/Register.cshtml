@@ -1,6 +1,8 @@
-<h1 class="display-4">Register new User!</h1>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
 
-@if (ViewData["RegisterResult"] is null || ((String ?) ViewData["RegisterResult"]) != "true") {
+
+<h1 class="display-4">Register new User!</h1>
+<!-- @if (ViewData["RegisterResult"] is null || ((String ?) ViewData["RegisterResult"]) != "true") {
     <form method="post">
         Login: <input type="text" id="username" name="username"/> <br/>
         Password: <input type="password" id="password1" name="password1"/> <br/>
@@ -10,4 +12,19 @@
     </form>
 } else {
     <h1 class="display-4">@ViewData["RegisterResult"]</h1>
+} -->
+
+
+@if (ViewData["RegisterResult"] is null || ((String ?) ViewData["RegisterResult"]) != "true") {
+    <form class="pure-form" method="post">
+        <input type="text" placeholder="Login" id="username" name="username" /> <br />
+        <input type="password" placeholder="Password" id="password1" name="password1"/> <br/>
+         <input type="password" placeholder="Repeat password" id="password2" name="password2"/> <br/>
+        <br/><input type="submit" class="pure-button pure-button-primary" value="Submit" asp-page-handler="Submit" />
+        @ViewData["RegisterResult"]
+    </form>
+} else {
+    <h1 class="display-4">@ViewData["RegisterResult"]</h1>
 }
+
+

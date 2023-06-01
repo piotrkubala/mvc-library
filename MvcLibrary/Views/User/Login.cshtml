@@ -1,76 +1,19 @@
-<style>
-.form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-}
-
-.form-input {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 300px;
-  margin: 10px;
-}
-
-.form-input label {
-  font-weight: bold;
-}
-
-.form-input input {
-  flex-grow: 1;
-  margin-left: 10px;
-}
-
-.form-submit {
-  display: flex;
-  justify-content: center;
-}
-
-.test_red {
-  color: red;
-  text-align: center;
-}
-</style>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
 
 <h1 class="display-4">Login</h1>
-
-<form method="post">
+<!-- <form method="post">
     Login: <input type="text" id="username" name="username" /> <br />
     Password: <input type="password" id="password" name="password" /> <br />
     <input type="submit" value="Submit" asp-page-handler="Submit" />
     @ViewData["LoginResult"]
-</form>
+</form> -->
 
-
-
-<form class="pure-form">
+<form class="pure-form" method="post">
     <fieldset>
-        <legend>A compact inline form</legend>
-    Login: <input type="text" id="username" name="username" /> <br />
-    Password: <input type="password" id="password" name="password" /> <br />
-
-        <button type="submit" class="pure-button pure-button-primary">Sign in</button>
+        <input type="text" placeholder="Login" id="username" name="username" /> <br />
+        <input type="password" placeholder="Password" id="password" name="password" /> <br />
+        <br/><input type="submit" class="pure-button pure-button-primary" value="Submit" asp-page-handler="Submit" />
+        @ViewData["LoginResult"]
     </fieldset>
 </form>
 
-
-
-<form method="post">
-    <div class="form-container">
-    Login: <input type="text" id="username" name="username" /> <br />
-    Password: <input type="password" id="password" name="password" /> <br />
-    <div class="form-submit">
-    
-    
-    <input type="submit" value="Submit" asp-page-handler="Submit" />
-    </div>
-    </div>
-    @ViewData["LoginResult"]
-</form>
-
-
-<p class="test_red">Test</p>

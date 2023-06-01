@@ -19,9 +19,9 @@ public struct UserData {
 [Route("[controller]/")]
 public class UserController : Controller
 {
-    private readonly UserDBContext _db;
+    private readonly LibraryDBContext _db;
 
-    public UserController(UserDBContext context) {
+    public UserController(LibraryDBContext context) {
         _db = context;
     }
 
@@ -261,11 +261,6 @@ public class UserController : Controller
                 }
             ).ToList();
 
-        Console.WriteLine("===allUsersNotAdmin.Count===");
-        Console.WriteLine(allUsersNotAdmin.Count);
-
-        Console.WriteLine(form.Keys);
-
         for (int i = 0; i < allUsersNotAdmin.Count; i++) {
             UserData user = allUsersNotAdmin[i];
 
@@ -275,9 +270,6 @@ public class UserController : Controller
 
             String adminKey = $"admin-{user.Username}-{user.UserId}";
             String approveKey = $"approved-{user.Username}-{user.UserId}";
-
-            Console.WriteLine($"{adminKey} {approveKey}");
-            Console.WriteLine($"{form.ContainsKey(adminKey)} {form.ContainsKey(approveKey)}");
 
             if (form.ContainsKey(adminKey) && form[adminKey] == "on") {
                 user.IsAdmin = true;

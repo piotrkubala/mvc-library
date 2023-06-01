@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 // register db
-builder.Services.AddDbContext<UserDBContext>(options => options.UseSqlite("Data Source=MvcLibrary.db"));
+builder.Services.AddDbContext<LibraryDBContext>(options => options.UseSqlite("Data Source=MvcLibrary.db"));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -47,7 +47,7 @@ app.MapControllerRoute(
 
 using (var scope = app.Services.CreateScope()) {
     // create new user if database is empty
-    using(UserDBContext ?db = scope.ServiceProvider.GetService<UserDBContext>()) {
+    using(LibraryDBContext ?db = scope.ServiceProvider.GetService<LibraryDBContext>()) {
         if (db is null) {
             throw new Exception("UserDBContext is null");
         }
