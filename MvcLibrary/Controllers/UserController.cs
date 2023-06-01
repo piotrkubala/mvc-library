@@ -10,6 +10,7 @@ using System.Text;
 namespace MvcLibrary.Controllers;
 
 public struct UserData {
+    public int UserId;
     public String Username;
     public bool IsApproved;
     public bool IsAdmin;
@@ -98,6 +99,7 @@ public class UserController : Controller
 
         HttpContext.Session.SetString("username", usernameGiven);
         HttpContext.Session.SetString("isadmin", userModel.IsAdmin.ToString());
+        HttpContext.Session.SetInt32("userid", userModel.UserId);
 
         SetViewDataFromSession();
 
@@ -213,6 +215,7 @@ public class UserController : Controller
                 from user in _db.Users
                 orderby user.IsAdmin descending, user.IsApproved ascending, user.Username ascending
                 select new UserData {
+                    UserId = user.UserId,
                     Username = user.Username,
                     IsApproved = user.IsApproved,
                     IsAdmin = user.IsAdmin
@@ -222,6 +225,76 @@ public class UserController : Controller
         ViewData["AllUsers"] = allUsers;
 
         return View();
+    }
+
+    [Route("manage/")]
+    [HttpPost]
+    public IActionResult ManageUsers(IFormCollection form) {
+        String ?username = HttpContext.Session.GetString("username");
+        int ?userId = HttpContext.Session.GetInt32("userid");
+
+        if (username is null) {
+            return RedirectToAction("Index", "Home");
+        }
+
+        if (HttpContext.Session.GetString("isadmin") != "True") {
+            return RedirectToAction("Index", "Home");
+        }
+
+        List<UserData> allUsersNotAdmin =
+            (
+                from user in _db.Users
+                where !user.IsAdmin || user.Username == username
+                select new UserData {
+                    UserId = user.UserId,
+                    Username = user.Username,
+                    IsApproved = user.IsApproved,
+                    IsAdmin = user.IsAdmin
+                }
+            ).ToList();
+
+        Console.WriteLine("===allUsersNotAdmin.Count===");
+        Console.WriteLine(allUsersNotAdmin.Count);
+
+        for (int i = 0; i < allUsersNotAdmin.Count; i++) {
+            UserData user = allUsersNotAdmin[i];
+
+            if (user.Username != username && user.UserId == userId && user.IsAdmin) {
+                continue;
+            }
+
+            String adminKey = $"admin-{user.Username}-{user.UserId}";
+            String approveKey = $"approved-{user.Username}-{user.UserId}";
+
+            Console.WriteLine($"{adminKey} {approveKey}");
+            Console.WriteLine($"{form.ContainsKey(adminKey)} {form.ContainsKey(approveKey)}");
+
+            if (form.ContainsKey(adminKey) && form[adminKey] == "on") {
+                user.IsAdmin = true;
+                user.IsApproved = true;
+            } else if (form.ContainsKey(approveKey)) {
+                Console.WriteLine(form[approveKey]);
+                user.IsApproved = form[approveKey] == "on";
+            } else if (user.Username == username) {
+                user.IsAdmin = form[adminKey] == "on";
+                HttpContext.Session.SetString("isadmin", user.IsAdmin ? "True" : "False");
+            }
+
+            UserModel ?userModel = _db.Users.Find(user.UserId);
+
+            if (userModel is null) {
+                continue;
+            }
+
+            userModel.IsAdmin = user.IsAdmin;
+            userModel.IsApproved = user.IsApproved;
+
+            _db.Users.Update(userModel);
+        }
+
+        _db.SaveChanges();
+
+        return RedirectToAction("ManageUsers");
     }
 
     [HttpGet("{*url}", Order = 999)]

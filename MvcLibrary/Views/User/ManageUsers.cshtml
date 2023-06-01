@@ -5,7 +5,7 @@
     <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
     <h2 class="text-center">Admin panel</h2>
 
-    <form>
+    <form method="post">
         <table class="text-center">
             <tr>
                 <th>Username</th>
@@ -18,12 +18,14 @@
                     <tr>
                         <th>@item.Username</th>
                         <th>
-                            @if (item.IsAdmin) {
+                            @if (item.IsAdmin && item.Username != (String) ViewData["Username"]) {
                                 <span>
                                     ADMIN
                                 </span>
                             } else {
-                                <input type="checkbox" name="admin-@item.Username"/>
+                                <input type="checkbox" name="admin-@item.Username-@item.UserId" @if (item.IsAdmin) {
+                                    @:checked
+                                }/>
                             }
                         </th>
                         <th>
@@ -32,7 +34,7 @@
                                     ADMIN
                                 </span>
                             } else {
-                                <input type="checkbox" name="approved-@item.Username" @if (item.IsAdmin) {
+                                <input type="checkbox" name="approved-@item.Username-@item.UserId" @if (item.IsApproved) {
                                     @:checked
                                 }/>
                             }
