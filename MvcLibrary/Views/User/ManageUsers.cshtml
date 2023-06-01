@@ -1,6 +1,5 @@
 @if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "" || ((String ?) ViewData["IsAdmin"]) != "True") {
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+    <h1 class="text-center">Please log in to continue</h1>
 } else {
     <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
     <h2 class="text-center">Admin panel</h2>
@@ -46,7 +45,7 @@
                 }
             }
         </table>
-
-        <input type="submit" value="Save changes" />
+        <br /><input type="submit" class="pure-button pure-button-primary" value="Save changes" asp-page-handler="Submit" />
+        <!-- <input type="submit" value="Save changes" /> -->
     </form>
 }

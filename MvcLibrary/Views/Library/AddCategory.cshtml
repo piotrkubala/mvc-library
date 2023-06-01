@@ -1,0 +1,18 @@
+@if (ViewData["Username"] is null || ((String?)ViewData["Username"]) == "")
+{
+    <h1 class="text-center">Please log in to continue</h1>
+}
+else
+{
+    <h1 class="text-center">Welcome, @ViewData["Username"]</h1>
+    <h2 class="text-center">Add new category</h2>
+
+    <form class="pure-form" method="post">
+        <div class="form-group">
+            <input type="text" id="categoryName" name="category-name" placeholder="Enter category name" />
+            <input type="text" id="categoryDescription" name="category-description"
+                placeholder="Enter category description" />
+        <br /><input type="submit" class="pure-button pure-button-primary" value="Submit" asp-page-handler="Submit" />
+        </div>
+    </form>
+}

@@ -10,5 +10,7 @@ public class BookCategoryModel {
 
     [Required]
     [StringLength(50)]
-    public string Name { get; set; } = "";
+    public String Name { get; set; } = "";
+
+    public String Description { get; set; } = "";
 }

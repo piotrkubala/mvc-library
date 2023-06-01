@@ -1,19 +1,32 @@
+@using MvcLibrary.Controllers
+
 @if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "") {
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+    <h1 class="text-center">Please log in to continue</h1>
 } else {
     <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
     <h2 class="text-center">Book list</h2>
 
     <table class="text-center">
         <tr>
-            <th>Username</th>
-            <th>Is admin?</th>
-            <th>Is approved?</th>
+            <th>BookId</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Publisher</th>
+            <th>ISBN</th>
+            <th>Publication date</th>
             <br/>
         </tr>
         @if (ViewData["BooksList"] is not null) {
-            @foreach (BookModel item in (ViewData["BooksList"] as List<BookModel>)) {
+            @foreach (BookDisplayElement item in (ViewData["BooksList"] as List<BookDisplayElement>)) {
+                <th>@item.BookId</th>
+                <th>@item.Title</th>
+                <th>@item.Author</th>
+                <th>@item.BookCategory</th>
+                <th>@item.Publisher</th>
+                <th>@item.Isbn</th>
+                <th>@item.PublicationDate</th>
+                <br/>
             }
         }
     </table>

@@ -1,0 +1,24 @@
+@if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "" || ((BookCategoryModel []?) ViewData["BookCategories"]) is null) {
+    <h1 class="text-center">Please log in to continue</h1>
+} else {
+    <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
+    <h2 class="text-center">Add new book</h2>
+
+    <form class="pure-form" method="post">
+        <input type="text" name="title" placeholder="Title" class="form-control" />
+        <input type="text" name="author" placeholder="Author" class="form-control" />
+        <input type="text" name="description" placeholder="Description" class="form-control" />
+        <input type="text" name="publisher" placeholder="Publisher" class="form-control" />
+        <input type="text" name="isbn" placeholder="ISBN" class="form-control" />
+        <input type="date" name="publication-date" placeholder="Publication Date" class="form-control" />
+        
+        <select name="category" class="form-control">
+            @foreach (BookCategoryModel category in (ViewData["BookCategories"] as BookCategoryModel[])) {
+                <option value="@category.BookCategoryId">@category.Name</option>
+            }
+        </select>
+
+        <br/><input type="submit" value="Add" class="pure-button pure-button-primary" />
+    </form>
+    @ViewData["AddBookMessage"]
+}
