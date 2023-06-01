@@ -39,6 +39,10 @@ public class UserController : Controller
 
     [Route("login/")]
     public IActionResult Login() {
+        if (HttpContext.Session.GetString("username") != null && HttpContext.Session.GetString("username") != "") {
+            return RedirectToAction("Index", "Home");
+        }
+
         SetViewDataFromSession();
 
         return View();
@@ -47,6 +51,10 @@ public class UserController : Controller
     [Route("login/")]
     [HttpPost]
     public IActionResult Login(IFormCollection form) {
+        if (HttpContext.Session.GetString("username") != null && HttpContext.Session.GetString("username") != "") {
+            return RedirectToAction("Index", "Home");
+        }
+
         // check if all fields are filled
         if (form["username"] == "" || form["password"] == "") {
             ViewData["LoginResult"] = "Both fields must be filled";
@@ -115,7 +123,7 @@ public class UserController : Controller
 
     [Route("register/")]
     public IActionResult Register() {
-        if (HttpContext.Session.GetString("username") != null) {
+        if (HttpContext.Session.GetString("username") != null && HttpContext.Session.GetString("username") != "") {
             return RedirectToAction("Index", "Home");
         }
 
@@ -127,7 +135,7 @@ public class UserController : Controller
     [Route("register/")]
     [HttpPost]
     public IActionResult Register(IFormCollection form) {
-        if (HttpContext.Session.GetString("username") != null) {
+        if (HttpContext.Session.GetString("username") != null && HttpContext.Session.GetString("username") != "") {
             return RedirectToAction("Index", "Home");
         }
 
@@ -256,6 +264,8 @@ public class UserController : Controller
         Console.WriteLine("===allUsersNotAdmin.Count===");
         Console.WriteLine(allUsersNotAdmin.Count);
 
+        Console.WriteLine(form.Keys);
+
         for (int i = 0; i < allUsersNotAdmin.Count; i++) {
             UserData user = allUsersNotAdmin[i];
 
@@ -272,12 +282,11 @@ public class UserController : Controller
             if (form.ContainsKey(adminKey) && form[adminKey] == "on") {
                 user.IsAdmin = true;
                 user.IsApproved = true;
-            } else if (form.ContainsKey(approveKey)) {
-                Console.WriteLine(form[approveKey]);
-                user.IsApproved = form[approveKey] == "on";
             } else if (user.Username == username) {
                 user.IsAdmin = form[adminKey] == "on";
                 HttpContext.Session.SetString("isadmin", user.IsAdmin ? "True" : "False");
+            } else {
+                user.IsApproved = form[approveKey] == "on";
             }
 
             UserModel ?userModel = _db.Users.Find(user.UserId);

@@ -1,21 +1,76 @@
-<body>
-    <h1 class="display-4">Login</h1>
+<style>
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px;
+}
 
-    <form method="post">
-        Login: <input type="text" id="username" name="username" /> <br />
-        Password: <input type="password" id="password" name="password" /> <br />
-        <input type="submit" value="Submit" asp-page-handler="Submit" />
-        @ViewData["LoginResult"]
-    </form>
+.form-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px;
+  margin: 10px;
+}
+
+.form-input label {
+  font-weight: bold;
+}
+
+.form-input input {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.form-submit {
+  display: flex;
+  justify-content: center;
+}
+
+.test_red {
+  color: red;
+  text-align: center;
+}
+</style>
 
 
-    <form method=“post” class=“form-container”>
-        <div class=“form-input”> <label for=“username”>Login:</label> <input type=“text” id=“username”
-                name=“username” />
-        </div>
-        <div class=“form-input”> <label for=“password”>Password:</label> <input type=“password” id=“password”
-                name=“password” /> </div>
-        <div class=“form-submit”> <input type=“submit” value=“Submit” asp-page-handler=“Submit” /> </div>
-        @ViewData["LoginResult"]
-    </form>
-</body>
+<h1 class="display-4">Login</h1>
+
+<form method="post">
+    Login: <input type="text" id="username" name="username" /> <br />
+    Password: <input type="password" id="password" name="password" /> <br />
+    <input type="submit" value="Submit" asp-page-handler="Submit" />
+    @ViewData["LoginResult"]
+</form>
+
+
+
+<form class="pure-form">
+    <fieldset>
+        <legend>A compact inline form</legend>
+    Login: <input type="text" id="username" name="username" /> <br />
+    Password: <input type="password" id="password" name="password" /> <br />
+
+        <button type="submit" class="pure-button pure-button-primary">Sign in</button>
+    </fieldset>
+</form>
+
+
+
+<form method="post">
+    <div class="form-container">
+    Login: <input type="text" id="username" name="username" /> <br />
+    Password: <input type="password" id="password" name="password" /> <br />
+    <div class="form-submit">
+    
+    
+    <input type="submit" value="Submit" asp-page-handler="Submit" />
+    </div>
+    </div>
+    @ViewData["LoginResult"]
+</form>
+
+
+<p class="test_red">Test</p>
