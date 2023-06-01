@@ -1,0 +1,8 @@
+<h1 class="display-4">Login</h1>
+
+<form method="post">
+    Login: <input type="text" id="username" name="username"/> <br/>
+    Password: <input type="password" id="password" name="password1"/> <br/>
+    <input type="submit" value="Submit" asp-page-handler="Submit"/>
+    @ViewData["LoginResult"]
+</form>
