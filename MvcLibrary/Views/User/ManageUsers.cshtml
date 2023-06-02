@@ -7,13 +7,15 @@
 
 
     <form form class="pure-form" method="post">
-        <table class="text-center">
+        <table class="text-center pure-table">
+            <thead>
             <tr>
                 <th>Username</th>
                 <th>Is admin?</th>
                 <th>Is approved?</th>
                 <br/>
             </tr>
+            </thead>
             @if (ViewData["AllUsers"] is not null) {
                 @foreach (MvcLibrary.Controllers.UserData item in (ViewData["AllUsers"] as List<MvcLibrary.Controllers.UserData>)) {
                     <tr>

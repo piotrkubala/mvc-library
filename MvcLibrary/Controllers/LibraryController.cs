@@ -9,6 +9,13 @@ using System.Text;
 
 namespace MvcLibrary.Controllers;
 
+public struct ReaderDisplayElement {
+    public int ReaderId { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public int BooksCount { get; set; }
+}
+
 public struct BorrowingData {
     public int BorrowingId { get; set; }
     public int BookCopyId { get; set; }
@@ -376,6 +383,12 @@ public class LibraryController : Controller {
                 }
         ).ToArray();
 
+        Console.WriteLine("dlugosc: " + borrowingData.Length);
+        Console.WriteLine("dlugosc wszystkie: " + (
+            from borrowing in _db.Borrowings
+            select borrowing
+        ).Count());
+
         bool isBorrowed = borrowingData.Any(borrowing => borrowing.ReturnDate is null);
 
         ViewData["field-names-to-draw"] = fieldNamesToDraw;
@@ -395,6 +408,8 @@ public class LibraryController : Controller {
 
         ViewData["is-borrowed"] = isBorrowed;
 
+        System.Console.WriteLine(ViewData["EditBookCopyMessageForm"]);
+
         return View();
     }
 
@@ -407,6 +422,14 @@ public class LibraryController : Controller {
 
         SetViewDataFromSession();
 
+        bool isCorrectId = (
+            from bookCopyModel in _db.BookCopies where bookCopyModel.BookCopyId == bookCopyI select bookCopyModel
+        ).Count() != 0;
+
+        if (!isCorrectId) {
+            return RedirectToAction("ListBooks");
+        }
+
         bool canBeBorrowed = (
             from borrowing in _db.Borrowings where borrowing.BookCopyId == bookCopyI && borrowing.ReturnDate == null select borrowing
         ).Count() == 0;
@@ -418,6 +441,8 @@ public class LibraryController : Controller {
 
             return RedirectToAction("EditBookCopy", bookCopyI);
         }
+
+        Console.WriteLine("Can be borrowed: " + canBeBorrowed);
 
         if ((String ?) form["borrow"] == "Borrow") {
             System.Console.WriteLine("====================================");
@@ -533,6 +558,31 @@ public class LibraryController : Controller {
         ViewData["AddReaderMessage"] = "Reader added successfully";
 
         return RedirectToAction("AddReader");
+    }
+
+    [Route("listreaders/")]
+    public IActionResult ListReaders() {
+        if (HttpContext.Session.GetString("username") == null || HttpContext.Session.GetString("username") == "") {
+            return RedirectToAction("Login", "User");
+        }
+
+        SetViewDataFromSession();
+
+        ReaderDisplayElement[] readers = (
+            from reader in _db.Readers
+            select new ReaderDisplayElement {
+                ReaderId = reader.ReaderId,
+                FirstName = reader.FirstName,
+                LastName = reader.LastName,
+                BooksCount = (
+                    from borrowing in _db.Borrowings where borrowing.ReaderId == reader.ReaderId select borrowing
+                ).Count()
+            }
+        ).ToArray();
+
+        ViewData["readers"] = readers;
+
+        return View();
     }
 
     [HttpGet("{*url}", Order = 999)]

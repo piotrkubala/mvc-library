@@ -1,0 +1,32 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+
+@using MvcLibrary.Controllers
+
+@if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "") {
+    <h1 class="text-center">Please log in to continue</h1>
+} else {
+    <h1 class="text-center">Welcome, @ViewData["Username"]!</h1>
+    <h2 class="text-center">Reader list</h2>
+
+    <table class="text-center pure-table">
+        <thead>
+        <tr>
+            <th>Reader id</th>
+            <th>First name</th>
+            <th>Borrowed books count</th>
+            <br/>
+        </tr>
+        </thead>
+        @if (ViewData["readers"] is not null) {
+            @foreach (ReaderDisplayElement item in (ViewData["readers"] as ReaderDisplayElement[])) {
+                <tr>
+                    <th>@item.ReaderId</th>
+                    <th>@item.FirstName</th>
+                    <th>@item.LastName</th>
+                    <th>@item.BooksCount</th>
+                    <br/>
+                </tr>
+            }
+        }
+    </table>
+}
