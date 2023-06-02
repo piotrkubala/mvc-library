@@ -343,10 +343,6 @@ public class LibraryController : Controller {
             return RedirectToAction("ListBooks");
         }
 
-        BorrowingModel[] borrowings = (
-            from borrowing in _db.Borrowings where borrowing.BookCopyId == bookCopyId select borrowing
-        ).ToArray();
-
         String ?categoryName = (
             from bookCategory in _db.BookCategories where bookCategory.BookCategoryId == book.BookCategoryId select bookCategory.Name
         ).FirstOrDefault();
@@ -380,6 +376,8 @@ public class LibraryController : Controller {
                 }
         ).ToArray();
 
+        bool isBorrowed = borrowingData.Any(borrowing => borrowing.ReturnDate is null);
+
         ViewData["field-names-to-draw"] = fieldNamesToDraw;
 
         ViewData["book-copy-id"] = bookCopy.BookCopyId;
@@ -390,13 +388,106 @@ public class LibraryController : Controller {
         ViewData["book-isbn"] = book.Isbn;
         ViewData["book-publication-date"] = book.PublicationDate?.ToString("yyyy-MM-dd");
         ViewData["book-category-id"] = book.BookCategoryId;
-        ViewData["book-borrowings"] = borrowings;
         ViewData["book-category-name"] = categoryName;
         ViewData["current-date"] = currentDate.ToString("yyyy-MM-dd");
 
         ViewData["borrowingdata"] = borrowingData;
 
+        ViewData["is-borrowed"] = isBorrowed;
+
         return View();
+    }
+
+    [Route("editbookcopy/{bookCopyId:int}")]
+    [HttpPost]
+    public IActionResult EditBookCopy(int bookCopyI, IFormCollection form) {
+        if (HttpContext.Session.GetString("username") == null || HttpContext.Session.GetString("username") == "") {
+            return RedirectToAction("Login", "User");
+        }
+
+        SetViewDataFromSession();
+
+        bool canBeBorrowed = (
+            from borrowing in _db.Borrowings where borrowing.BookCopyId == bookCopyI && borrowing.ReturnDate == null select borrowing
+        ).Count() == 0;
+
+        String ?readerid = (String ?) form["readerid"];
+
+        if (readerid is null || readerid == "") {
+            ViewData["EditBookCopyMessageForm"] = "Reader ID is required";
+
+            return RedirectToAction("EditBookCopy", bookCopyI);
+        }
+
+        if ((String ?) form["borrow"] == "Borrow") {
+            System.Console.WriteLine("====================================");
+            if (!canBeBorrowed) {
+                ViewData["EditBookCopyMessageForm"] = "Book copy cannot be borrowed";
+
+                return RedirectToAction("EditBookCopy", bookCopyI);
+            }
+
+            System.Console.WriteLine("====================1===============");
+
+            try {
+                int readerIdInt = Int32.Parse(readerid);
+
+                bool isValidId = (
+                    from reader in _db.Readers where reader.ReaderId == readerIdInt select reader
+                ).Count() > 0;
+
+                Console.WriteLine(isValidId);
+                System.Console.WriteLine(readerid);
+
+                if (!isValidId) {
+                    ViewData["EditBookCopyMessageForm"] = "Invalid reader ID";
+
+                    return RedirectToAction("EditBookCopy", bookCopyI);
+                }
+
+                BorrowingModel borrowing = new BorrowingModel {
+                    ReaderId = readerIdInt,
+                    BookCopyId = bookCopyI,
+                    BorrowDate = DateTime.Now,
+                    ReturnDate = null
+                };
+
+                System.Console.WriteLine("====================2===============");
+
+                _db.Borrowings.Add(borrowing);
+
+                _db.SaveChanges();
+            } catch (Exception) {
+                ViewData["EditBookCopyMessageForm"] = "Invalid field format";
+
+                return RedirectToAction("EditBookCopy", bookCopyI);
+            }
+        } else if ((String ?) form["return"] == "Return") {
+            try {
+                BorrowingModel ?borrowing = (
+                    from borrowingModel in _db.Borrowings where borrowingModel.BookCopyId == bookCopyI && borrowingModel.ReturnDate == null
+                    select borrowingModel
+                ).FirstOrDefault();
+
+                if (borrowing is null) {
+                    ViewData["EditBookCopyMessageForm"] = "Book copy cannot be returned";
+
+                    return RedirectToAction("EditBookCopy", bookCopyI);
+                }
+
+                borrowing.ReturnDate = DateTime.Now;
+
+                _db.Borrowings.Update(borrowing);
+
+                _db.SaveChanges();
+            } catch (Exception) {
+                ViewData["EditBookCopyMessageForm"] = "Invalid field format";
+
+                return RedirectToAction("EditBookCopy", bookCopyI);
+            }
+        }
+
+        return RedirectToAction("EditBookCopy", bookCopyI);
     }
 
     [Route("addreader/")]

@@ -66,4 +66,31 @@
             }
         </tbody>
     </table>
+
+    <br />
+
+    @if (!((bool ?) ViewData["is-borrowed"] ?? false)) {
+        <span>
+            Borrow book:
+            <form method="post">
+                Reader id: <input type="text" name="readerid" />
+                <br />
+                
+                <input type="submit" value="Borrow" name="borrow" />
+            </form>
+        </span>
+    } else {
+        <span>
+            Return book:
+            <form method="post">
+                Reader id: <input type="text" name="readerid" />
+                <br />
+                
+                <input type="submit" value="Return" name="return" />
+            </form>
+        </span>
+    }
 }
+
+<h2 class="text-center">@ViewData["EditBookCopyMessage"]</h2>
+<h2 class="text-center">@ViewData["EditBookCopyMessageForm"]</h2>

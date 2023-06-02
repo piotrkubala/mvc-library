@@ -20,7 +20,6 @@ public class BorrowingModel {
     [DataType(DataType.Date)]
     public DateTime BorrowDate { get; set; } = DateTime.Now;
 
-    [Required]
     [DataType(DataType.Date)]
-    public DateTime ReturnDate { get; set; } = DateTime.Now.AddDays(7);
+    public DateTime ?ReturnDate { get; set; }
 }
