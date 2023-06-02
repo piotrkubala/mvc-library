@@ -1,0 +1,69 @@
+@using MvcLibrary.Controllers;
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+
+@if (ViewData["Username"] is null || ((String ?) ViewData["Username"]) == "") {
+    <h1 class="text-center">Please log in to continue</h1>
+} else {
+    <table class="pure-table pure-table-bordered">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Books</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewData["field-names-to-draw"] is not null) {
+                @foreach (String field in (ViewData["field-names-to-draw"] as String[])) {
+                    @if (ViewData[field] is not null) {
+                        <tr>
+                            <th>
+                                @field
+                            </th>
+                            <th>
+                                @ViewData[field]
+                            </th>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+    <br />
+    <br />
+
+    <table class="pure-table pure-table-bordered">
+        <thead>
+            <tr>
+                <th>Reader id</th>
+                <th>Reader name</th>
+                <th>Reader surname</th>
+                <th>Borrowing date</th>
+                <th>Return date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewData["borrowingdata"] is not null) {
+                @foreach (BorrowingData borrowing in (ViewData["borrowingdata"] as BorrowingData[])) {
+                    <tr>
+                        <th>
+                            @borrowing.ReaderId
+                        </th>
+                        <th>
+                            @borrowing.ReaderName
+                        </th>
+                        <th>
+                            @borrowing.ReaderSurname
+                        <th>
+                            @borrowing.BorrowingDate
+                        </th>
+                        <th>
+                            @borrowing.ReturnDate
+                        </th>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}

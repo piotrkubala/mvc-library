@@ -9,6 +9,17 @@ using System.Text;
 
 namespace MvcLibrary.Controllers;
 
+public struct BorrowingData {
+    public int BorrowingId { get; set; }
+    public int BookCopyId { get; set; }
+    public int BookId { get; set; }
+    public int ReaderId { get; set; }
+    public string ReaderName { get; set; }
+    public string ReaderSurname { get; set; }
+    public DateTime BorrowingDate { get; set; }
+    public DateTime? ReturnDate { get; set; }
+}
+
 public struct BookDisplayElement {
     public int BookId { get; set; }
     public string Title { get; set; }
@@ -217,6 +228,12 @@ public class LibraryController : Controller {
         ViewData["publication-date"] = book.PublicationDate?.ToString("yyyy-MM-dd");
         ViewData["book-category-id"] = book.BookCategoryId;
 
+        BookCopyModel[] bookCopies = (
+            from bookCopy in _db.BookCopies where bookCopy.BookId == bookId select bookCopy
+        ).ToArray();
+
+        ViewData["BookCopies"] = bookCopies;
+
         return View();
     }
 
@@ -228,6 +245,18 @@ public class LibraryController : Controller {
         }
 
         SetViewDataFromSession();
+
+        if(form["addnewcopy"] == "Add") {
+            _db.BookCopies.Add(new BookCopyModel {
+                BookId = bookId
+            });
+            
+            _db.SaveChanges();
+
+            ViewData["EditBookMessage"] = "Book copy added successfully";
+
+            return RedirectToAction("EditBook", bookId);
+        }
 
         BookModel ?book = (
             from bookModel in _db.Books where bookModel.BookId == bookId select bookModel
@@ -288,6 +317,86 @@ public class LibraryController : Controller {
         ViewData["EditBookMessage"] = "Book edited successfully";
 
         return RedirectToAction("EditBook", bookId);
+    }
+
+    [Route("editbookcopy/{bookCopyId:int}")]
+    public IActionResult EditBookCopy(int bookCopyId) {
+        if (HttpContext.Session.GetString("username") == null || HttpContext.Session.GetString("username") == "") {
+            return RedirectToAction("Login", "User");
+        }
+
+        SetViewDataFromSession();
+
+        BookCopyModel ?bookCopy = (
+            from bookCopyModel in _db.BookCopies where bookCopyModel.BookCopyId == bookCopyId select bookCopyModel
+        ).FirstOrDefault();
+
+        if (bookCopy is null) {
+            return RedirectToAction("ListBooks");
+        }
+
+        BookModel ?book = (
+            from bookModel in _db.Books where bookModel.BookId == bookCopy.BookId select bookModel
+        ).FirstOrDefault();
+
+        if (book is null) {
+            return RedirectToAction("ListBooks");
+        }
+
+        BorrowingModel[] borrowings = (
+            from borrowing in _db.Borrowings where borrowing.BookCopyId == bookCopyId select borrowing
+        ).ToArray();
+
+        String ?categoryName = (
+            from bookCategory in _db.BookCategories where bookCategory.BookCategoryId == book.BookCategoryId select bookCategory.Name
+        ).FirstOrDefault();
+
+        DateTime currentDate = DateTime.Now;
+
+        String []fieldNamesToDraw = {
+            "book-copy-id",
+            "book-id",
+            "book-title",
+            "book-author",
+            "book-publisher",
+            "book-isbn",
+            "book-publication-date",
+            "book-category-name",
+            "current-date"
+        };
+
+        BorrowingData[] borrowingData = (
+            from borrowing in _db.Borrowings join
+                reader in _db.Readers on borrowing.ReaderId equals reader.ReaderId join
+                bookCopyEl in _db.BookCopies on borrowing.BookCopyId equals bookCopyEl.BookCopyId
+                select new BorrowingData {
+                    BorrowingId = borrowing.BorrowingId,
+                    ReaderId = reader.ReaderId,
+                    ReaderName = reader.FirstName,
+                    ReaderSurname = reader.LastName,
+                    BookCopyId = bookCopyEl.BookCopyId,
+                    BorrowingDate = borrowing.BorrowDate,
+                    ReturnDate = borrowing.ReturnDate
+                }
+        ).ToArray();
+
+        ViewData["field-names-to-draw"] = fieldNamesToDraw;
+
+        ViewData["book-copy-id"] = bookCopy.BookCopyId;
+        ViewData["book-id"] = book.BookId;
+        ViewData["book-title"] = book.Title;
+        ViewData["book-author"] = book.Author;
+        ViewData["book-publisher"] = book.Publisher;
+        ViewData["book-isbn"] = book.Isbn;
+        ViewData["book-publication-date"] = book.PublicationDate?.ToString("yyyy-MM-dd");
+        ViewData["book-category-id"] = book.BookCategoryId;
+        ViewData["book-borrowings"] = borrowings;
+        ViewData["book-category-name"] = categoryName;
+        ViewData["current-date"] = currentDate.ToString("yyyy-MM-dd");
+
+        ViewData["borrowingdata"] = borrowingData;
+
+        return View();
     }
 
     [HttpGet("{*url}", Order = 999)]

@@ -7,14 +7,14 @@
     <h2 class="text-center">Edit book</h2>
 
     <form class="pure-form" method="post">
-        <input type="text" name="title" placeholder="Title" class="form-control" value="@ViewData["title"]" />
-        <input type="text" name="author" placeholder="Author" class="form-control" value="@ViewData["author"]" />
-        <input type="text" name="description" placeholder="Description" class="form-control" value="@ViewData["description"]" />
-        <input type="text" name="publisher" placeholder="Publisher" class="form-control" value="@ViewData["publisher"]" />
-        <input type="text" name="isbn" placeholder="ISBN" class="form-control" value="@ViewData["isbn"]" />
-        <input type="date" name="publication-date" placeholder="Publication Date" class="form-control" value="@ViewData["publication-date"]" />
+        Title: <input type="text" name="title" placeholder="Title" class="form-control" value="@ViewData["title"]" />
+        Author: <input type="text" name="author" placeholder="Author" class="form-control" value="@ViewData["author"]" />
+        Description: <input type="text" name="description" placeholder="Description" class="form-control" value="@ViewData["description"]" />
+        Publisher: <input type="text" name="publisher" placeholder="Publisher" class="form-control" value="@ViewData["publisher"]" />
+        ISBN: <input type="text" name="isbn" placeholder="ISBN" class="form-control" value="@ViewData["isbn"]" />
+        Publication date: <input type="date" name="publication-date" placeholder="Publication Date" class="form-control" value="@ViewData["publication-date"]" />
         
-        <select name="book-category-id" class="form-control" >
+        Book category: <select name="book-category-id" class="form-control" >
             @foreach (BookCategoryModel category in (ViewData["BookCategories"] as BookCategoryModel[])) { 
                 @if (category.BookCategoryId == (int ?) ViewData["book-category-id"]) {
                     <option value="@category.BookCategoryId" selected >@category.Name</option>
@@ -27,6 +27,38 @@
         <br/>
         <br/><input type="submit" value="Edit" class="pure-button pure-button-primary" />
     </form>
+
+    <br/>
+
+    <form class="pure-form" method="post">
+        Add new book copy: <input type="submit" name="addnewcopy" value="Add" class="pure-button pure-button-primary" />
+    </form>
+
+    <br/>
+
+    <table class="text-center pure-table">
+        <thead>
+            <tr>
+                <th>Book copy id</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewData["BookCopies"] is not null) {
+                foreach (BookCopyModel bookCopy in (ViewData["BookCopies"] as BookCopyModel[])) {
+                    <tr>
+                        <th>@bookCopy.BookCopyId</th>
+                        <th>
+                            <a href="/Library/editbookcopy/@bookCopy.BookCopyId">Edit</a>
+                        </th>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <br />
+    <br />
 }
 
 <h2 class="text-center">@ViewData["EditBookMessage"]</h2>
