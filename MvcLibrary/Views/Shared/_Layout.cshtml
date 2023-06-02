@@ -45,6 +45,10 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Library" asp-action="AddCategory">Add new category</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Library" asp-action="AddReader">Add new reader</a>
+                            </li>
+
                             @if (ViewBag.IsAdmin is not null && ViewBag.IsAdmin == "True") {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="ManageUsers">Admin</a>

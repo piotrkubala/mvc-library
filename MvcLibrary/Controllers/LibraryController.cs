@@ -124,7 +124,7 @@ public class LibraryController : Controller {
 
         try {
             List<BookCategoryModel> category = (
-                from bookCategory in _db.BookCategories where bookCategory.BookCategoryId == Int32.Parse((String ?) form["book-category-id"]) select bookCategory
+                from bookCategory in _db.BookCategories where bookCategory.BookCategoryId == Int32.Parse((String ?) form["book-category-id"] ?? "") select bookCategory
             ).ToList();
 
             if (category.Count() == 0) {
@@ -139,8 +139,8 @@ public class LibraryController : Controller {
                 Publisher = ((String ?) form["publisher"]) ?? "",
                 Description = ((String ?) form["description"]) ?? "",
                 Isbn = ((String ?) form["isbn"]) ?? "",
-                PublicationDate = DateTime.Parse((String ?) form["publication-date"]),
-                BookCategoryId = Int32.Parse((String ?) form["book-category-id"])
+                PublicationDate = DateTime.Parse((String ?) form["publication-date"] ?? ""),
+                BookCategoryId = Int32.Parse((String ?) form["book-category-id"] ?? "0")
             });
 
             _db.SaveChanges();
@@ -286,7 +286,7 @@ public class LibraryController : Controller {
 
         try {
             List<BookCategoryModel> category = (
-                from bookCategory in _db.BookCategories where bookCategory.BookCategoryId == Int32.Parse((String ?) form["book-category-id"]) select bookCategory
+                from bookCategory in _db.BookCategories where bookCategory.BookCategoryId == Int32.Parse((String ?) form["book-category-id"] ?? "") select bookCategory
             ).ToList();
 
             if (category.Count() == 0) {
@@ -300,8 +300,8 @@ public class LibraryController : Controller {
             book.Publisher = ((String ?) form["publisher"]) ?? "";
             book.Description = ((String ?) form["description"]) ?? "";
             book.Isbn = ((String ?) form["isbn"]) ?? "";
-            book.PublicationDate = DateTime.Parse((String ?) form["publication-date"]);
-            book.BookCategoryId = Int32.Parse((String ?) form["book-category-id"]);
+            book.PublicationDate = DateTime.Parse((String ?) form["publication-date"] ?? "");
+            book.BookCategoryId = Int32.Parse((String ?) form["book-category-id"] ?? "");
 
             System.Console.WriteLine(form["book-category-id"]);
 
@@ -397,6 +397,51 @@ public class LibraryController : Controller {
         ViewData["borrowingdata"] = borrowingData;
 
         return View();
+    }
+
+    [Route("addreader/")]
+    public IActionResult AddReader() {
+        if (HttpContext.Session.GetString("username") == null || HttpContext.Session.GetString("username") == "") {
+            return RedirectToAction("Login", "User");
+        }
+
+        SetViewDataFromSession();
+
+        return View();
+    }
+
+    [Route("addreader/")]
+    [HttpPost]
+    public IActionResult AddReader(IFormCollection form) {
+        if (HttpContext.Session.GetString("username") == null || HttpContext.Session.GetString("username") == "") {
+            return RedirectToAction("Login", "User");
+        }
+
+        SetViewDataFromSession();
+
+        List<String> fields = new List<String> {
+            "name",
+            "surname"
+        };
+
+        foreach (String field in fields) {
+            if (((String ?) form[field]) is null || (String ?) form[field] == "") {
+                ViewData["AddReaderMessage"] = "All fields are required";
+
+                return View();
+            }
+        }
+
+        _db.Add(new ReaderModel {
+            FirstName = ((String ?) form["name"]) ?? "",
+            LastName = ((String ?) form["surname"]) ?? ""
+        });
+
+        _db.SaveChanges();
+
+        ViewData["AddReaderMessage"] = "Reader added successfully";
+
+        return RedirectToAction("AddReader");
     }
 
     [HttpGet("{*url}", Order = 999)]
